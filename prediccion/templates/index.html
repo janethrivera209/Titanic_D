@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicción Titanic</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #FFE4E6;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 350px;
+            text-align: center;
+        }
+        h1 { margin-bottom: 25px; color: #333; }
+        select, input {
+            width: 100%;
+            padding: 8px 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;   
+            -webkit-appearance: none;     
+            appearance: none;             
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        button {
+            background: #FFA2A2;
+            color: black;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 15px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        button:hover { background: #FF6467; }
+        #resultado {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .verde { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .rojo { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .error { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Predicción Titanic</h1>
+        <!-- Agregamos method POST y csrf_token -->
+        <form id="formulario" method="POST" action="/predecir/">
+            {% csrf_token %}
+            Clase:
+            <select name="pclass" id="pclass" required>
+                <option value="1">Primera Clase</option>
+                <option value="2">Segunda Clase</option>
+                <option value="3">Tercera Clase</option>
+            </select>
+            Sexo:
+            <select name="sex" required>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
+            </select>
+            Edad: 
+            <input type="number" name="age" required min="0" max="100" step="1">
+            Hermanos/Esposos a bordo: 
+            <input type="number" name="sibsp" required min="0" step="1">
+            Padres/Hijos a bordo: 
+            <input type="number" name="parch" required min="0" step="1">
+            Puerto de embarque:
+            <select name="embarked" required>
+                <option value="C">Cherbourg</option>
+                <option value="Q">Queenstown</option>
+                <option value="S">Southampton</option>
+            </select>
+            <button type="submit">Predecir</button>
+        </form>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        // Función para obtener el CSRF token de la cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        const form = document.getElementById("formulario");
+        const resultadoDiv = document.getElementById("resultado");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            resultadoDiv.textContent = "Procesando...";
+            resultadoDiv.className = "";
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("/predecir/", { // barra final obligatoria
+                    method: "POST",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.resultado) {
+                    resultadoDiv.textContent = data.resultado;
+                    resultadoDiv.className = data.resultado === "SOBREVIVE" ? "verde" : "rojo";
+                } else if (data.error) {
+                    resultadoDiv.textContent = "Error: " + data.error;
+                    resultadoDiv.className = "error";
+                }
+            } catch (err) {
+                resultadoDiv.textContent = "Error de conexión";
+                resultadoDiv.className = "error";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
