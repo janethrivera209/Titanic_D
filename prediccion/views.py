@@ -14,15 +14,12 @@ model = joblib.load(modelo_path)
 sex_map = {"male": 1, "female": 0}
 embarked_map = {"C": 0, "Q": 1, "S": 2}
 
-# Precio promedio por clase
-fare_por_clase = {1: 100, 2: 50, 3: 15}
-
 # Vista principal
 def index(request):
     return render(request, "index.html")
 
 # Vista de predicción (POST)
-@csrf_exempt  # <-- permite POST sin problemas de CSRF si usamos JS
+@csrf_exempt  # permite POST sin problemas de CSRF si usamos JS
 def predecir(request):
     if request.method == "POST":
         try:
@@ -34,8 +31,10 @@ def predecir(request):
             parch = int(data["parch"])
             embarked = data["embarked"].upper()
 
-            fare = fare_por_clase.get(pclass, 0)
+            # Tomamos el precio que ingresó el usuario
+            fare = float(data.get("fare", 0))
 
+            # Creamos DataFrame con los datos de la persona
             nueva_persona = pd.DataFrame({
                 "Pclass": [pclass],
                 "Sex": [sex],
@@ -46,12 +45,15 @@ def predecir(request):
                 "Embarked": [embarked]
             })
 
+            # Mapeamos valores categóricos
             nueva_persona["Sex"] = nueva_persona["Sex"].map(sex_map)
             nueva_persona["Embarked"] = nueva_persona["Embarked"].map(embarked_map)
 
+            # Validamos que no haya valores nulos
             if nueva_persona.isnull().any().any():
                 return JsonResponse({"error": "Valores de entrada no válidos"}, status=400)
 
+            # Predicción usando el modelo
             pred = model.predict(nueva_persona)[0]
             resultado = "SOBREVIVE" if pred == 1 else "NO SOBREVIVE"
 
@@ -60,3 +62,4 @@ def predecir(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Método no permitido"}, status=405)
+
