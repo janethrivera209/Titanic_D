@@ -5,3 +5,4 @@ numpy==2.3.4
 scikit-learn==1.7.2
 whitenoise==6.11.0
 djangorestframework==3.16.1  # opcional, solo si usas DRF
+gunicorn==21.2.0
