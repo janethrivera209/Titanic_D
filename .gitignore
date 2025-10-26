@@ -1,0 +1,8 @@
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+venv/
+__pycache__/
+*.pyc
+*.pkl
+entrenamiento.ipynb

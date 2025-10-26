@@ -31,9 +31,9 @@
             font-size: 0.95em;
         }
         input[type=number] {
-            -moz-appearance: textfield;   
-            -webkit-appearance: none;     
-            appearance: none;             
+            -moz-appearance: textfield;
+            -webkit-appearance: none;
+            appearance: none;
         }
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -70,7 +70,7 @@
         <h1>Predicción Titanic</h1>
         <form id="formulario" method="POST" action="/predecir/">
             {% csrf_token %}
-            
+
             Clase:
             <select name="pclass" id="pclass" required>
                 <option value="1">Primera Clase</option>
@@ -87,13 +87,13 @@
                 <option value="female">Mujer</option>
             </select>
 
-            Edad: 
+            Edad:
             <input type="number" name="age" required min="0" max="100" step="1">
 
-            Hermanos/Esposos a bordo: 
+            Hermanos/Esposos a bordo:
             <input type="number" name="sibsp" required min="0" step="1">
 
-            Padres/Hijos a bordo: 
+            Padres/Hijos a bordo:
             <input type="number" name="parch" required min="0" step="1">
 
             Puerto de embarque:
