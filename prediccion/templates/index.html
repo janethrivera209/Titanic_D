@@ -2,24 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predicción Titanic</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f4f8;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
         .container {
             background: #FFE4E6;
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            width: 350px;
+            width: 400px;       /* ancho fijo */
+            height: 600px;      /* alto fijo */
             text-align: center;
+            overflow: hidden;   /* evita scroll */
         }
         h1 { margin-bottom: 25px; color: #333; }
         select, input {
@@ -31,9 +36,10 @@
             font-size: 0.95em;
         }
         input[type=number] {
-            -moz-appearance: textfield;
             -webkit-appearance: none;
+            -moz-appearance: textfield;
             appearance: none;
+            margin: 0;
         }
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
